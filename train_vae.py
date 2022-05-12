@@ -14,7 +14,7 @@ from torch.optim.lr_scheduler import ExponentialLR
 from torchvision import transforms as T
 from torch.utils.data import DataLoader
 from torchvision.datasets import ImageFolder
-from torchvision.utils import make_grid, save_image
+from torchvision.utils import make_grid
 
 # dalle classes and utils
 
