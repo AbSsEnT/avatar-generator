@@ -139,3 +139,9 @@ dmypy.json
 .pyre/
 src/data_processing/py-avatar-samples
 src/data_processing/eda.ipynb
+
+# PyCharm
+.idea
+
+# Miscs
+flask_app/secrets/session_secret.py
