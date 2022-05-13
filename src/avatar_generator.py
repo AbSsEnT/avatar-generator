@@ -15,7 +15,7 @@ def form_caption(avatar_config: dict) -> str:
         if prop.value in _IGNORE_PROPS or prop.value not in avatar_config:
             continue
 
-        caption += f"{prop.value} {avatar_config[prop.value]}, "
+        caption += f"{prop.value.replace('_', ' ')} {avatar_config[prop.value]}, "
 
     # Remove last comma.
     caption = caption[:-2]
