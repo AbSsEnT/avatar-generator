@@ -4,9 +4,22 @@ import numpy as np
 from PIL import Image
 from torch import Tensor
 
+from src.data_processing.helpers import AvatarConfigProperty
+
 
 def form_caption(avatar_config: dict) -> str:
-    return "caption"
+    _IGNORE_PROPS = ["style", "nose_type", "clothe_graphic_type"]
+    caption = ""
+
+    for prop in AvatarConfigProperty:
+        if prop.value in _IGNORE_PROPS or prop.value not in avatar_config:
+            continue
+
+        caption += f"{prop.value} {avatar_config[prop.value]}, "
+
+    # Remove last comma.
+    caption = caption[:-2]
+    return caption
 
 
 def pil_2_bytes(image: Image):

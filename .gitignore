@@ -137,5 +137,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-data_processing/py-avatar-samples
-data_processing/eda.ipynb
+src/data_processing/py-avatar-samples
+src/data_processing/eda.ipynb

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Deep Learning Avatar Generator{% endblock %}
+
+{% block body %}
+<div class="container">
+    <form action="{{ url_for('index') }}" method="POST">
+        <h4>Choose avatar properties</h4>
+        {% include 'drop_lists/skin_color.html' %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Generate</button>
+    </form>
+</div>
+{% endblock %}
