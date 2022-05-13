@@ -4,7 +4,7 @@ from enum import Enum
 class AvatarConfigProperty(Enum):
     STYLE = "style"
     SKIN_COLOR = "skin_color"
-    HAIR_COLOR = "hair color"
+    HAIR_COLOR = "hair_color"
     FACIAL_HAIR_TYPE = "facial_hair_type"
     FACIAL_HAIR_COLOR = "facial_hair_color"
     TOP_TYPE = "top_type"
@@ -16,6 +16,6 @@ class AvatarConfigProperty(Enum):
     ACCESSORIES_TYPE = "accessories_type"
     CLOTHE_TYPE = "clothe_type"
     CLOTHE_COLOR = "clothe_color"
-
+    CLOTHE_GRAPHIC_TYPE = "clothe_graphic_type"
 
 

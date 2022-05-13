@@ -7,6 +7,17 @@
     <form action="{{ url_for('index') }}" method="POST">
         <h4>Choose avatar properties</h4>
         {% include 'drop_lists/skin_color.html' %}
+        {% include 'drop_lists/hair_color.html' %}
+        {% include 'drop_lists/top_type.html' %}
+        {% include 'drop_lists/hat_color.html' %}
+        {% include 'drop_lists/facial_hair_type.html' %}
+        {% include 'drop_lists/facial_hair_color.html' %}
+        {% include 'drop_lists/clothe_type.html' %}
+        {% include 'drop_lists/clothe_color.html' %}
+        {% include 'drop_lists/mouth_type.html' %}
+        {% include 'drop_lists/eye_type.html' %}
+        {% include 'drop_lists/eyebrow_type.html' %}
+        {% include 'drop_lists/accessories_type.html' %}
         <button class="btn btn-lg btn-primary btn-block" type="submit">Generate</button>
     </form>
 </div>
