@@ -3,22 +3,34 @@
 {% block title %}Deep Learning Avatar Generator{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="container main-container rounded-3">
     <form action="{{ url_for('index') }}" method="POST">
-        <h4>Choose avatar properties</h4>
+        <h3 style="text-align: center">Select avatar properties</h3>
         {% include 'drop_lists/skin_color.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/hair_color.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/top_type.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/hat_color.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/facial_hair_type.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/facial_hair_color.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/clothe_type.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/clothe_color.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/mouth_type.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/eye_type.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/eyebrow_type.html' %}
+        <br class="custom-br">
         {% include 'drop_lists/accessories_type.html' %}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Generate</button>
+        <br class="custom-br">
+        <button class="btn btn-lg btn-primary btn-generate" type="submit">Generate</button>
     </form>
 </div>
 {% endblock %}

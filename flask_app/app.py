@@ -1,15 +1,21 @@
-import base64
 import io
 import uuid
-from flask import Flask, request, render_template, send_file, session
+import base64
 
-from src.avatar_generator import AvatarGenerator
+from flask import Flask, request, render_template, send_file, session
+from flask_session import Session
+
+from src.avatar_generator import AvatarGenerator, AvatarGeneratorDummy
 from src.avatar_generator import form_caption, pil_2_bytes
 from flask_app.secrets.session_secret import SECRET_KEY
 
 avatar_generator = AvatarGenerator()
-app = Flask(__name__, instance_relative_config=True, template_folder="templates")
+
+app = Flask(__name__)
+SESSION_TYPE = "filesystem"
 app.secret_key = SECRET_KEY
+app.config.from_object(__name__)
+Session(app)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -29,5 +35,11 @@ def index():
 
 @app.route("/download")
 def download():
+    send_file(io.BytesIO(session["contents"]), mimetype="image/png",
+              download_name=str(uuid.uuid4()), as_attachment=True)
     return send_file(io.BytesIO(session["contents"]), mimetype="image/png",
                      download_name=str(uuid.uuid4()), as_attachment=True)
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=4567)

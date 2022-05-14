@@ -145,3 +145,4 @@ src/data_processing/eda.ipynb
 
 # Miscs
 flask_app/secrets/session_secret.py
+flask_session

@@ -3,12 +3,19 @@
 {% block title %}Deep Learning Avatar Generator{% endblock %}
 
 {% block body %}
-<div class="container">
+<div class="container result-page-container">
     <form action="{{ url_for('download') }}" method="GET">
-        <h4>Generated avatar</h4>
+        <h3>Generated avatar</h3>
         <img id="generated_avatar" src="data:image/jpeg;base64,{{ generated_avatar }}">
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Download</button>
+        <br class="custom-br-lg">
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-auto">
+                <button class="btn btn-lg btn-primary btn-block btn-result-page" type="submit">Download</button>
+            </div>
+            <div class="col col-lg-auto">
+                <a href="{{ url_for('index') }}"><button class="btn btn-lg btn-primary btn-block btn-result-page" type="button">Back to main page</button></a>
+            </div>
+        </div>
     </form>
-    <a href="{{ url_for('index') }}"><button class="btn btn-lg btn-primary btn-block">Back to main page</button></a>
 </div>
 {% endblock %}

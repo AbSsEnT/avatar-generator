@@ -1,9 +1,14 @@
 import io
+from pathlib import Path
 
+import torch
 import numpy as np
 from PIL import Image
 from torch import Tensor
+from torchvision.utils import make_grid
 
+from dalle_pytorch import VQGanVAE, DALLE
+from dalle_pytorch.tokenizer import tokenizer
 from src.data_processing.helpers import AvatarConfigProperty
 
 
@@ -30,31 +35,53 @@ def pil_2_bytes(image: Image):
     return contents
 
 
-# TODO: make it singleton avoid creating new object every call. Or google, how to do it correctly.
 class AvatarGenerator:
-    __DALLE_SAMPLES = 32
-    __AVATAR_RESOLUTION = (256, 256)
+    __DALLE_SAMPLES = 1
+    __DALLE_PATH = Path("./dalle.pt")
+
+    def __init__(self):
+        self.__dalle = self.__load_dalle()
+
+    def __load_dalle(self):
+        assert self.__DALLE_PATH.exists(), 'Incorrect path for DALL-E weights!'
+        load_obj = torch.load(str(self.__DALLE_PATH))
+        dalle_params = load_obj.pop('hparams')
+        weights = load_obj.pop('weights')
+
+        vae = VQGanVAE()
+        dalle = DALLE(vae=vae, **dalle_params).cuda()
+        dalle.load_state_dict(weights)
+        return dalle
 
     def __infer_dalle(self, caption: str) -> Tensor:
-        pass
-
-    def __clip_rerank(self, candidate_samples: Tensor, caption: str, n_samples: int) -> Tensor:
-        pass
+        text_tokens = tokenizer.tokenize([caption], self.__dalle.text_seq_len).cuda()
+        output = self.__dalle.generate_images(text_tokens, filter_thres=0.9)
+        return output
 
     def __generate_avatars(self, caption: str, n_samples: int) -> Tensor:
         dalle_generated_samples = self.__infer_dalle(caption)
-        best_generated_samples = self.__clip_rerank(dalle_generated_samples, caption, n_samples)
+        return dalle_generated_samples
 
-        return best_generated_samples
+    @staticmethod
+    def __samples_postprocessing(samples: Tensor) -> Image:
+        outputs = list()
 
-    def __samples_postprocessing(self, samples: Tensor) -> Image:
-        pass
+        for sample in samples:
+            grid = make_grid(sample, normalize=True)
+            ndarr = grid.mul(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to("cpu", torch.uint8).numpy()
+            im = Image.fromarray(ndarr)
+            outputs.append(im)
 
-    def __dummy_result(self, n_samples: int):
-        return [Image.fromarray(np.ones(self.__AVATAR_RESOLUTION) * 127, mode="RGB")] * n_samples
+        return outputs
 
     def generate_avatars(self, caption: str, n_samples: int = 4):
-        samples = self.__dummy_result(n_samples)
+        samples = self.__generate_avatars(caption, n_samples)
+        samples = self.__samples_postprocessing(samples)
         return samples
 
 
+class AvatarGeneratorDummy:
+    __AVATAR_RESOLUTION = (256, 256)
+
+    def generate_avatars(self, caption: str, n_samples: int):
+        return [Image.fromarray(np.ones(self.__AVATAR_RESOLUTION) * 127, mode="RGB")] * n_samples
