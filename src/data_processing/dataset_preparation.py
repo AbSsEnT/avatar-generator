@@ -1,13 +1,15 @@
 import os
 import re
-import shutil as sh
 from uuid import uuid4
-from random import choice
 from argparse import ArgumentParser
 
+import numpy as np
+import shutil as sh
 from tqdm import tqdm
 import py_avataaars as pa
+from numpy.random import choice
 from py_avataaars import PyAvataaar
+from joblib import Parallel, delayed
 
 
 def pick_random(prop: pa.AvatarEnum):
@@ -74,20 +76,24 @@ def prepare_save_path(save_path: str):
     os.makedirs(save_path)
 
 
+def generate_sample(save_path: str, random_state: int or None):
+    np.random.seed(random_state)
+    filename = uuid4()
+    avatar, avatar_config = get_random_avatar()
+    avatar_caption = config_2_caption(avatar_config)
+
+    # Save generated sample.
+    avatar.render_png_file(os.path.join(save_path, f"{filename}.png"))
+    write_txt(os.path.join(save_path, f"{filename}.txt"), avatar_caption)
+
+
 def create_dataset(save_path: str, n_samples: int = 10 ** 5):
     print(f"Starting to generate {n_samples} samples.")
     print(f"Saving data to {save_path} directory.")
 
     prepare_save_path(save_path)
 
-    for _ in tqdm(range(n_samples)):
-        filename = uuid4()
-        avatar, avatar_config = get_random_avatar()
-        avatar_caption = config_2_caption(avatar_config)
-
-        # Save generated sample.
-        avatar.render_png_file(os.path.join(save_path, f"{filename}.png"))
-        write_txt(os.path.join(save_path, f"{filename}.txt"), avatar_caption)
+    Parallel(n_jobs=-1, backend="multiprocessing")(delayed(generate_sample)(save_path, np.random.randint(0, 100000)) for _ in tqdm(range(n_samples)))
 
 
 if __name__ == "__main__":
