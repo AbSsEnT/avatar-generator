@@ -144,5 +144,6 @@ src/data_processing/eda.ipynb
 .idea
 
 # Miscs
-flask_app/secrets/session_secret.py
+flask_app/secrets
 flask_session
+weights/

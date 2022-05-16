@@ -2,10 +2,10 @@ import io
 import uuid
 import base64
 
-from flask import Flask, request, render_template, send_file, session
 from flask_session import Session
+from flask import Flask, request, render_template, send_file, session
 
-from src.avatar_generator import AvatarGenerator, AvatarGeneratorDummy
+from src.avatar_generator import AvatarGenerator
 from src.avatar_generator import form_caption, pil_2_bytes
 from flask_app.secrets.session_secret import SECRET_KEY
 
@@ -23,7 +23,7 @@ def index():
     if request.method == "POST":
         avatar_config = request.form.to_dict()
         caption = form_caption(avatar_config)
-        generated_avatar = avatar_generator.generate_avatars(caption, n_samples=1)[0]
+        generated_avatar = avatar_generator.generate_avatars(caption)[0]
         contents = pil_2_bytes(generated_avatar)
         session["contents"] = contents
         encoded_image_data = base64.b64encode(contents)

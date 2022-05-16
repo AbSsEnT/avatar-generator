@@ -2,7 +2,6 @@ import io
 from pathlib import Path
 
 import torch
-import numpy as np
 from PIL import Image
 from torch import Tensor
 from torchvision.utils import make_grid
@@ -37,7 +36,7 @@ def pil_2_bytes(image: Image):
 
 class AvatarGenerator:
     __DALLE_SAMPLES = 1
-    __DALLE_PATH = Path("./dalle.pt")
+    __DALLE_PATH = Path("./weights/best/dalle.pt")
 
     def __init__(self):
         self.__dalle = self.__load_dalle()
@@ -58,7 +57,7 @@ class AvatarGenerator:
         output = self.__dalle.generate_images(text_tokens, filter_thres=0.9)
         return output
 
-    def __generate_avatars(self, caption: str, n_samples: int) -> Tensor:
+    def __generate_avatars(self, caption: str) -> Tensor:
         dalle_generated_samples = self.__infer_dalle(caption)
         return dalle_generated_samples
 
@@ -74,14 +73,7 @@ class AvatarGenerator:
 
         return outputs
 
-    def generate_avatars(self, caption: str, n_samples: int = 4):
-        samples = self.__generate_avatars(caption, n_samples)
+    def generate_avatars(self, caption: str):
+        samples = self.__generate_avatars(caption)
         samples = self.__samples_postprocessing(samples)
         return samples
-
-
-class AvatarGeneratorDummy:
-    __AVATAR_RESOLUTION = (256, 256)
-
-    def generate_avatars(self, caption: str, n_samples: int):
-        return [Image.fromarray(np.ones(self.__AVATAR_RESOLUTION) * 127, mode="RGB")] * n_samples
