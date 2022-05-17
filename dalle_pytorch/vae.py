@@ -187,21 +187,6 @@ class VQGanVAE(nn.Module):
         self.num_tokens = config.model.params.n_embed
         self.is_gumbel = isinstance(self.model, GumbelVQ)
 
-        self._register_external_parameters()
-
-    def _register_external_parameters(self):
-        """Register external parameters for DeepSpeed partitioning."""
-        if (
-                not distributed_utils.is_distributed
-                or not distributed_utils.using_backend(
-            distributed_utils.DeepSpeedBackend)
-        ):
-            return
-
-        deepspeed = distributed_utils.backend.backend_module
-        deepspeed.zero.register_external_parameter(
-            self, self.model.quantize.embed.weight if self.is_gumbel else self.model.quantize.embedding.weight)
-
     @torch.no_grad()
     def get_codebook_indices(self, img):
         b = img.shape[0]
@@ -222,6 +207,3 @@ class VQGanVAE(nn.Module):
 
         img = (img.clamp(-1., 1.) + 1) * 0.5
         return img
-
-    def forward(self, img):
-        raise NotImplemented

@@ -35,7 +35,6 @@ def pil_2_bytes(image: Image):
 
 
 class AvatarGenerator:
-    __DALLE_SAMPLES = 1
     __DALLE_PATH = Path("./weights/best/dalle.pt")
 
     def __init__(self):

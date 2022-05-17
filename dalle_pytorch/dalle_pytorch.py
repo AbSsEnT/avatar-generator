@@ -465,14 +465,7 @@ class DALLE(nn.Module):
 
     @torch.no_grad()
     @eval_decorator
-    def generate_texts(
-            self,
-            tokenizer,
-            text=None,
-            *,
-            filter_thres=0.5,
-            temperature=1.
-    ):
+    def generate_texts(self, tokenizer, text=None, *, filter_thres=0.5, temperature=1.):
         text_seq_len = self.text_seq_len
         if text is None or text == "":
             text_tokens = torch.tensor([[0]]).cuda()
@@ -512,19 +505,14 @@ class DALLE(nn.Module):
 
     @torch.no_grad()
     @eval_decorator
-    def generate_images(
-            self,
-            text,
-            *,
-            clip=None,
-            filter_thres=0.5,
-            temperature=1.,
-            img=None,
-            num_init_img_tokens=None,
-            cond_scale=1.,
-            use_cache=False,
-    ):
-        vae, text_seq_len, image_seq_len, num_text_tokens = self.vae, self.text_seq_len, self.image_seq_len, self.num_text_tokens
+    def generate_images(self, text, *, clip=None, filter_thres=0.5, temperature=1.,
+                        img=None, num_init_img_tokens=None, cond_scale=1., use_cache=False,):
+
+        vae = self.vae
+        text_seq_len = self.text_seq_len
+        image_seq_len = self.image_seq_len
+        num_text_tokens = self.num_text_tokens
+
         total_len = text_seq_len + image_seq_len
 
         text = text[:, :text_seq_len]  # make sure text is within bounds
@@ -538,12 +526,12 @@ class DALLE(nn.Module):
             indices = vae.get_codebook_indices(img)
             num_img_tokens = default(num_init_img_tokens,
                                      int(0.4375 * image_seq_len))  # OpenAI used 14 * 32 initial tokens to prime
-            assert num_img_tokens < image_seq_len, 'number of initial image tokens for priming must be less than the total image token sequence length'
+            _msg = 'number of initial image tokens for priming must be less than the total image token sequence length'
+            assert num_img_tokens < image_seq_len, _msg
 
             indices = indices[:, :num_img_tokens]
             out = torch.cat((out, indices), dim=-1)
 
-        prev_cache = None
         cache = {} if use_cache else None
         for cur_len in range(out.shape[1], total_len):
             is_image = cur_len >= text_seq_len
@@ -556,8 +544,9 @@ class DALLE(nn.Module):
             filtered_logits = top_k(logits, thres=filter_thres)
             sample = gumbel_sample(filtered_logits, temperature=temperature, dim=-1)
 
+            # offset sampled token if it is an image token, since logit space is composed of text and then image tokens
             sample -= (
-                num_text_tokens if is_image else 0)  # offset sampled token if it is an image token, since logit space is composed of text and then image tokens
+                num_text_tokens if is_image else 0)
             out = torch.cat((out, sample[:, None]), dim=-1)
 
         text_seq = out[:, :text_seq_len]
@@ -583,14 +572,7 @@ class DALLE(nn.Module):
         null_cond_logits = self(*args, null_cond_prob=1., cache=prev_cache, **kwargs)
         return null_cond_logits + (logits - null_cond_logits) * cond_scale
 
-    def forward(
-            self,
-            text,
-            image=None,
-            return_loss=False,
-            null_cond_prob=0.,
-            cache=None,
-    ):
+    def forward(self, text, image=None, return_loss=False, null_cond_prob=0., cache=None,):
         assert text.shape[
                    -1] == self.text_seq_len, f'the length {text.shape[-1]} of the text tokens you passed in does not have the correct length ({self.text_seq_len})'
         batch, device, total_seq_len = text.shape[0], text.device, self.total_seq_len
