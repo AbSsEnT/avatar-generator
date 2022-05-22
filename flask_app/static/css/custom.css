@@ -1,5 +1,6 @@
 .main-container {
-    width: 20%;
+    /*max-width: 40%;*/
+    max-width: 500px;
     background-color: #e3e6e8;
     margin-top: 2%;
     padding-top: 10px;
@@ -39,5 +40,5 @@ body {
 }
 
 .btn-result-page {
-    width: 200px;
+    min-width: 200px;
 }

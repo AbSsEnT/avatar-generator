@@ -3,7 +3,7 @@
 {% block title %}Deep Learning Avatar Generator{% endblock %}
 
 {% block body %}
-<div class="container main-container rounded-3">
+<div class="container container-sm main-container rounded-3">
     <form action="{{ url_for('index') }}" method="POST">
         <h3 style="text-align: center">Select avatar properties</h3>
         {% include 'drop_lists/skin_color.html' %}

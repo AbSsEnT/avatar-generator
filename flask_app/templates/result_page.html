@@ -8,14 +8,10 @@
         <h3>Generated avatar</h3>
         <img id="generated_avatar" src="data:image/jpeg;base64,{{ generated_avatar }}">
         <br class="custom-br-lg">
-        <div class="row justify-content-md-center">
-            <div class="col col-lg-auto">
-                <button class="btn btn-lg btn-primary btn-block btn-result-page" type="submit">Download</button>
-            </div>
-            <div class="col col-lg-auto">
-                <a href="{{ url_for('index') }}"><button class="btn btn-lg btn-primary btn-block btn-result-page" type="button">Back to main page</button></a>
-            </div>
-        </div>
+        <button class="btn btn-lg btn-primary btn-block btn-result-page" type="submit">Download</button>
+        <br class="custom-br-lg">
+        <a href="{{ url_for('index') }}"><button class="btn btn-lg btn-primary btn-block btn-result-page" type="button">Back to main page</button></a>
+
     </form>
 </div>
 {% endblock %}
