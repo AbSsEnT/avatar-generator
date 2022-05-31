@@ -357,31 +357,10 @@ class CLIP(nn.Module):
 # main DALL-E class
 
 class DALLE(nn.Module):
-    def __init__(
-            self,
-            *,
-            dim,
-            vae,
-            num_text_tokens=10000,
-            text_seq_len=256,
-            depth,
-            heads=8,
-            dim_head=64,
-            reversible=False,
-            attn_dropout=0.,
-            ff_dropout=0,
-            sparse_attn=False,
-            attn_types=None,
-            loss_img_weight=7,
-            stable=False,
-            sandwich_norm=False,
-            shift_tokens=True,
-            rotary_emb=True,
-            shared_attn_ids=None,
-            shared_ff_ids=None,
-            share_input_output_emb=False,
-            optimize_for_inference=False,
-    ):
+    def __init__(self, *, dim, vae, num_text_tokens=10000, text_seq_len=256, depth, heads=8, dim_head=64,
+                 reversible=False, attn_dropout=0., ff_dropout=0, sparse_attn=False, attn_types=None,
+                 loss_img_weight=7, stable=False, sandwich_norm=False, shift_tokens=True, rotary_emb=True,
+                 shared_attn_ids=None, shared_ff_ids=None, share_input_output_emb=False, optimize_for_inference=False):
         super().__init__()
         assert isinstance(vae, (DiscreteVAE, OpenAIDiscreteVAE, VQGanVAE)), 'vae must be an instance of DiscreteVAE'
 
@@ -410,27 +389,13 @@ class DALLE(nn.Module):
         self.vae = vae
         set_requires_grad(self.vae, False)  # freeze VAE from being trained
 
-        self.transformer = Transformer(
-            dim=dim,
-            causal=True,
-            seq_len=seq_len,
-            depth=depth,
-            heads=heads,
-            dim_head=dim_head,
-            reversible=reversible,
-            attn_dropout=attn_dropout,
-            ff_dropout=ff_dropout,
-            attn_types=attn_types,
-            image_fmap_size=image_fmap_size,
-            sparse_attn=sparse_attn,
-            stable=stable,
-            sandwich_norm=sandwich_norm,
-            shift_tokens=shift_tokens,
-            rotary_emb=rotary_emb,
-            shared_attn_ids=shared_attn_ids,
-            shared_ff_ids=shared_ff_ids,
-            optimize_for_inference=optimize_for_inference,
-        )
+        self.transformer = Transformer(dim=dim, causal=True, seq_len=seq_len, depth=depth, heads=heads,
+                                       dim_head=dim_head, reversible=reversible, attn_dropout=attn_dropout,
+                                       ff_dropout=ff_dropout, attn_types=attn_types, image_fmap_size=image_fmap_size,
+                                       sparse_attn=sparse_attn, stable=stable, sandwich_norm=sandwich_norm,
+                                       shift_tokens=shift_tokens, rotary_emb=rotary_emb,
+                                       shared_attn_ids=shared_attn_ids, shared_ff_ids=shared_ff_ids,
+                                       optimize_for_inference=optimize_for_inference)
 
         self.stable = stable
 
